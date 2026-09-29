@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Inserimento dati cliente e informazioni del veicolo">
+  <title>Gestore tagliandi | Nuovo intervento</title>
+  <link rel="stylesheet" href="style.css">
+  
+
+</head>
+<body>
+  <main class="page">
+    <header class="intro">
+      <div>
+        <p class="eyebrow">Gestore tagliandi</p>
+        <h1>Registra un nuovo intervento.</h1>
+      </div>
+      <p>Inserisci i dati del cliente e del veicolo per tenere traccia della lavorazione.</p>
+    </header>
+
+    <section class="form-shell" aria-labelledby="form-title">
+      <form id="intervento-form" action="#" method="post">
+        <div class="section">
+          <div class="section-heading">
+            <span class="section-number">01</span>
+            <h2 id="form-title">Dati utente</h2>
+          </div>
+          <div class="fields">
+            <div class="field">
+              <label for="nome">Nome <span class="required" aria-hidden="true">*</span></label>
+              <input type="text" id="nome" name="nome" autocomplete="given-name" placeholder="Es. Marco" required>
+            </div>
+            <div class="field">
+              <label for="cognome">Cognome <span class="required" aria-hidden="true">*</span></label>
+              <input type="text" id="cognome" name="cognome" autocomplete="family-name" placeholder="Es. Rossi" required>
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" autocomplete="email" placeholder="nome@esempio.it">
+            </div>
+            <div class="field">
+              <label for="telefono">Telefono <span class="required" aria-hidden="true">*</span></label>
+              <input type="tel" id="telefono" name="telefono" autocomplete="tel" placeholder="Es. 333 1234567" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-heading">
+            <span class="section-number">02</span>
+            <h2>Informazioni veicolo</h2>
+          </div>
+          <div class="fields">
+            <div class="field">
+              <label for="targa">Targa <span class="required" aria-hidden="true">*</span></label>
+              <input type="text" id="targa" name="targa" placeholder="Es. AB123CD" maxlength="10" required>
+            </div>
+            <div class="field">
+              <label for="modello">Modello <span class="required" aria-hidden="true">*</span></label>
+              <input type="text" id="modello" name="modello" placeholder="Es. Fiat Panda 1.2" required>
+            </div>
+            <div class="field">
+              <label for="anno">Anno di immatricolazione <span class="required" aria-hidden="true">*</span></label>
+              <input type="number" id="anno" name="anno" min="1900" max="2026" placeholder="Es. 2020" required>
+            </div>
+            <div class="field">
+              <label for="chilometraggio">Chilometraggio</label>
+              <input type="number" id="chilometraggio" name="chilometraggio" min="0" placeholder="Es. 85000">
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-heading">
+            <span class="section-number">03</span>
+            <h2>Dettagli intervento</h2>
+          </div>
+          <div class="fields">
+            <div class="field">
+              <label for="intervento">Tipo di intervento <span class="required" aria-hidden="true">*</span></label>
+              <select id="intervento" name="intervento" required>
+                <option value="" selected disabled>Seleziona un intervento</option>
+                <option value="tagliando-ordinario">Tagliando ordinario</option>
+                <option value="manutenzione">Manutenzione</option>
+                <option value="revisione">Revisione</option>
+                <option value="diagnosi">Diagnosi</option>
+                <option value="riparazione">Riparazione</option>
+                <option value="altro">Altro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="data">Data prevista <span class="required" aria-hidden="true">*</span></label>
+              <input type="date" id="data" name="data" required>
+            </div>
+            <div class="field full">
+              <label for="note">Note aggiuntive</label>
+              <textarea id="note" name="note" placeholder="Descrivi eventuali richieste o anomalie segnalate dal cliente..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <label class="checkline" for="privacy">
+            <input type="checkbox" id="privacy" name="privacy" required>
+            <span>Confermo che i dati inseriti sono corretti.</span>
+          </label>
+          <button type="submit">Salva intervento</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("intervento-form");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+      payload.privacy = formData.get("privacy") === "on";
+
+      try {
+        const response = await fetch("/api/interventi", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || "Errore durante il salvataggio.");
+        }
+
+        alert("Intervento salvato correttamente!");
+        form.reset();
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+  </script>
+</body>
+</html>
