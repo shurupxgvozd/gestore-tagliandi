@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestore Tagliandi Auto</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div>
+          <p class="eyebrow">Officina & Assistenza</p>
+          <h1>Gestione tagliandi auto</h1>
+        </div>
+        <div class="badge">Nuovo intervento</div>
+      </header>
+
+      <main class="layout">
+        <section class="card form-card">
+          <h2>Dati del veicolo</h2>
+
+          <form id="tagliandoForm">
+            <div class="grid two-columns">
+              <label>
+                <span>Cliente</span>
+                <input type="text" name="cliente" placeholder="Mario Rossi" required />
+              </label>
+
+              <label>
+                <span>Veicolo</span>
+                <input type="text" name="veicolo" placeholder="BMW Serie 3" required />
+              </label>
+
+              <label>
+                <span>Targa</span>
+                <input type="text" name="targa" placeholder="AB123CD" required />
+              </label>
+
+              <label>
+                <span>Km</span>
+                <input type="number" name="km" min="0" placeholder="45200" required />
+              </label>
+
+              <label>
+                <span>Data ingresso</span>
+                <input type="date" name="data" required />
+              </label>
+
+              <label>
+                <span>Tipo intervento</span>
+                <select name="intervento" required>
+                  <option value="">Seleziona</option>
+                  <option value="Manutenzione ordinaria">Manutenzione ordinaria</option>
+                  <option value="Riparazione meccanica">Riparazione meccanica</option>
+                  <option value="Diagnosi elettronica">Diagnosi elettronica</option>
+                  <option value="Cambio pneumatici">Cambio pneumatici</option>
+                  <option value="Revisione periodica">Revisione periodica</option>
+                  <option value="Carrozzeria e verniciatura">Carrozzeria e verniciatura</option>
+                  <option value="Sospensioni">Sospensioni</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Priorità</span>
+                <select name="priorita">
+                  <option value="Bassa">Bassa</option>
+                  <option value="Media" selected>Media</option>
+                  <option value="Alta">Alta</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Stato</span>
+                <select name="stato">
+                  <option value="In lavorazione" selected>In lavorazione</option>
+                  <option value="In attesa pezzi">In attesa pezzi</option>
+                  <option value="Pronto">Pronto</option>
+                  <option value="Consegnato">Consegnato</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              <span>Descrizione guasto / richiesta</span>
+              <textarea name="descrizione" rows="4" placeholder="Descrivi il problema rilevato o il lavoro richiesto..." required></textarea>
+            </label>
+
+            <div class="checkbox-group">
+              <p>Servizi richiesti</p>
+              <div class="checks">
+                <label><input type="checkbox" name="servizi" value="Controllo fluidi" /> Controllo fluidi</label>
+                <label><input type="checkbox" name="servizi" value="Diagnosi computerizzata" /> Diagnosi computerizzata</label>
+                <label><input type="checkbox" name="servizi" value="Allineamento ruote" /> Allineamento ruote</label>
+                <label><input type="checkbox" name="servizi" value="Tagliando completo" /> Tagliando completo</label>
+              </div>
+            </div>
+
+            <div class="grid two-columns">
+              <label>
+                <span>Costo stimato (€)</span>
+                <input type="number" name="costo" min="0" step="0.01" placeholder="250.00" />
+              </label>
+
+              <label>
+                <span>Telefono contatto</span>
+                <input type="tel" name="telefono" placeholder="+39 333 1234567" />
+              </label>
+            </div>
+
+            <label>
+              <span>Note</span>
+              <textarea name="note" rows="3" placeholder="Note aggiuntive, riferimenti, orari preferiti..."></textarea>
+            </label>
+
+            <div class="actions">
+              <button type="submit" class="primary">Salva tagliando</button>
+              <button type="reset" class="secondary">Reset</button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="card summary-card">
+          <h2>Tagliandi registrati</h2>
+
+          <div class="stats">
+            <div>
+              <strong id="countTotal">0</strong>
+              <span>Totali</span>
+            </div>
+            <div>
+              <strong id="countInProgress">0</strong>
+              <span>In corso</span>
+            </div>
+            <div>
+              <strong id="countReady">0</strong>
+              <span>Pronti</span>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Veicolo</th>
+                  <th>Targa</th>
+                  <th>Intervento</th>
+                  <th>Stato</th>
+                </tr>
+              </thead>
+              <tbody id="tagliandiBody">
+                <tr>
+                  <td colspan="4" class="empty">Nessun tagliando inserito</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
