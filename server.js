@@ -54,9 +54,28 @@ async function initializeDatabase() {
         km INT,
         data_ingresso DATE,
         costo DECIMAL(10,2) DEFAULT 0.00,
+        priorita VARCHAR(20),
+        servizi TEXT,
+        telefono VARCHAR(30),
+        note TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB
     `);
+
+    const [columns] = await pool.query('SHOW COLUMNS FROM tagliandi');
+    const existingColumns = new Set(columns.map((column) => column.Field));
+    const additionalColumns = {
+      priorita: 'VARCHAR(20)',
+      servizi: 'TEXT',
+      telefono: 'VARCHAR(30)',
+      note: 'TEXT',
+    };
+
+    for (const [column, definition] of Object.entries(additionalColumns)) {
+      if (!existingColumns.has(column)) {
+        await pool.query(`ALTER TABLE tagliandi ADD COLUMN ${column} ${definition}`);
+      }
+    }
 
     console.log('Tabella "tagliandi" verificata / creata con successo.');
   } catch (error) {
@@ -90,6 +109,60 @@ app.get('/api/db-status', async (req, res) => {
       message: 'Errore di connessione al database',
       error: error.message,
     });
+  }
+});
+
+app.get('/api/tagliandi', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT
+        id, cliente, veicolo, targa, km, data_ingresso AS data,
+        tipo_intervento AS intervento, priorita, stato, descrizione,
+        servizi, costo, telefono, note
+      FROM tagliandi
+      ORDER BY created_at DESC, id DESC
+    `);
+    res.json(rows);
+  } catch (error) {
+    console.error('Errore durante il caricamento dei tagliandi:', error);
+    res.status(500).json({ success: false, message: 'Impossibile caricare i tagliandi' });
+  }
+});
+
+app.post('/api/tagliandi', async (req, res) => {
+  const {
+    cliente, veicolo, targa, km, data, intervento, priorita, stato,
+    descrizione, servizi, costo, telefono, note,
+  } = req.body;
+
+  if (!cliente?.trim() || !veicolo?.trim() || !targa?.trim() || !intervento?.trim() || !descrizione?.trim()) {
+    return res.status(400).json({ success: false, message: 'Completa tutti i campi obbligatori' });
+  }
+
+  const parsedKm = km === '' || km == null ? null : Number(km);
+  const parsedCost = costo === '' || costo == null ? null : Number(costo);
+  if ((parsedKm !== null && (!Number.isInteger(parsedKm) || parsedKm < 0)) ||
+      (parsedCost !== null && (!Number.isFinite(parsedCost) || parsedCost < 0))) {
+    return res.status(400).json({ success: false, message: 'Km e costo devono essere valori validi e non negativi' });
+  }
+
+  try {
+    const [result] = await pool.execute(
+      `INSERT INTO tagliandi
+        (cliente, veicolo, targa, km, data_ingresso, tipo_intervento, priorita, stato,
+         descrizione, servizi, costo, telefono, note)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        cliente.trim(), veicolo.trim(), targa.trim(), parsedKm, data || null,
+        intervento.trim(), priorita || 'Media', stato || 'In lavorazione',
+        descrizione.trim(), servizi || null, parsedCost, telefono?.trim() || null,
+        note?.trim() || null,
+      ],
+    );
+    res.status(201).json({ success: true, id: result.insertId });
+  } catch (error) {
+    console.error('Errore durante il salvataggio del tagliando:', error);
+    res.status(500).json({ success: false, message: 'Impossibile salvare il tagliando' });
   }
 });
 

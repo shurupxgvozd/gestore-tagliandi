@@ -1,46 +1,10 @@
-const STORAGE_KEY = 'tagliandiAutoRecords';
 const form = document.getElementById('tagliandoForm');
 const body = document.getElementById('tagliandiBody');
 const countTotal = document.getElementById('countTotal');
 const countInProgress = document.getElementById('countInProgress');
 const countReady = document.getElementById('countReady');
-
-const initialRecords = [
-  {
-    cliente: 'Luca Bianchi',
-    veicolo: 'Audi A4',
-    targa: 'AB123CD',
-    intervento: 'Manutenzione ordinaria',
-    stato: 'In lavorazione',
-    descrizione: 'Tagliando e verifica carrelli'
-  },
-  {
-    cliente: 'Sara Verdi',
-    veicolo: 'Volkswagen Golf',
-    targa: 'FG456RT',
-    intervento: 'Cambio pneumatici',
-    stato: 'Pronto',
-    descrizione: 'Sostituzione set gomme estate'
-  }
-];
-
-function loadRecords() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-
-  if (!saved) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(initialRecords));
-    return [...initialRecords];
-  }
-
-  try {
-    const parsed = JSON.parse(saved);
-    return Array.isArray(parsed) ? parsed : [...initialRecords];
-  } catch (error) {
-    return [...initialRecords];
-  }
-}
-
-let records = loadRecords();
+const formMessage = document.getElementById('formMessage');
+let records = [];
 
 function slugifyStatus(value) {
   return value
@@ -56,8 +20,14 @@ function slugifyStatus(value) {
     }[char] || char));
 }
 
-function saveRecords() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[character]));
 }
 
 function renderTable() {
@@ -72,14 +42,14 @@ function renderTable() {
   body.innerHTML = records
     .map((record) => {
       const item = record;
-      const statusClass = slugifyStatus(item.stato || 'In lavorazione');
+      const statusClass = slugifyStatus(item.stato || 'In lavorazione').replace(/[^a-z0-9-]/g, '');
 
       return `
         <tr>
-          <td>${item.veicolo || '—'}</td>
-          <td>${item.targa || '—'}</td>
-          <td>${item.intervento || '—'}</td>
-          <td><span class="tag ${statusClass}">${item.stato || 'In lavorazione'}</span></td>
+          <td>${escapeHtml(item.veicolo || '—')}</td>
+          <td>${escapeHtml(item.targa || '—')}</td>
+          <td>${escapeHtml(item.intervento || '—')}</td>
+          <td><span class="tag ${escapeHtml(statusClass)}">${escapeHtml(item.stato || 'In lavorazione')}</span></td>
         </tr>
       `;
     })
@@ -90,7 +60,20 @@ function renderTable() {
   countReady.textContent = String(records.filter((item) => item.stato === 'Pronto').length);
 }
 
-form.addEventListener('submit', (event) => {
+async function loadRecords() {
+  try {
+    const response = await fetch('/api/tagliandi');
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Errore nel caricamento');
+    records = result;
+    renderTable();
+  } catch (error) {
+    formMessage.textContent = `Errore: ${error.message}`;
+    formMessage.classList.add('error');
+  }
+}
+
+form.addEventListener('submit', async (event) => {
   event.preventDefault();
 
   const formData = new FormData(form);
@@ -112,10 +95,25 @@ form.addEventListener('submit', (event) => {
     note: formData.get('note')?.toString().trim() || ''
   };
 
-  records.unshift(record);
-  saveRecords();
-  renderTable();
-  form.reset();
+  formMessage.textContent = '';
+  formMessage.classList.remove('error');
+
+  try {
+    const response = await fetch('/api/tagliandi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(record)
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Errore nel salvataggio');
+
+    form.reset();
+    formMessage.textContent = 'Tagliando salvato correttamente.';
+    await loadRecords();
+  } catch (error) {
+    formMessage.textContent = `Errore: ${error.message}`;
+    formMessage.classList.add('error');
+  }
 });
 
-renderTable();
+loadRecords();
