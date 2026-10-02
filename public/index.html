@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestore Tagliandi Auto</title>
+    <title>Benvenuto - Officina</title>
+    <script>
+      try {
+        if (localStorage.getItem('theme') === 'light') document.documentElement.dataset.theme = 'light';
+      } catch {}
+    </script>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
@@ -11,155 +16,109 @@
       <header class="header">
         <div>
           <p class="eyebrow">Officina digitale // Precisione meccanica</p>
-          <h1>Gestione tagliandi auto</h1>
+          <h1>Benvenuto nella nostra officina</h1>
         </div>
-        <div class="badge">Nuovo intervento</div>
+        <div class="header-actions">
+          <button id="openSettings" type="button" class="settings-button" aria-label="Apri impostazioni">⚙️ Impostazioni</button>
+          <div class="badge">Prenota il tuo appuntamento</div>
+        </div>
       </header>
 
-      <main class="layout">
-        <section class="card form-card">
-          <h2>Dati del veicolo</h2>
-
-          <form id="tagliandoForm">
-            <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
-            <div class="grid two-columns">
-              <label>
-                <span>Cliente</span>
-                <input type="text" name="cliente" placeholder="Mario Rossi" required />
-              </label>
-
-              <label>
-                <span>Veicolo</span>
-                <input type="text" name="veicolo" placeholder="BMW Serie 3" required />
-              </label>
-
-              <label>
-                <span>Targa</span>
-                <input type="text" name="targa" placeholder="AB123CD" required />
-              </label>
-
-              <label>
-                <span>Km</span>
-                <input type="number" name="km" min="0" placeholder="45200" required />
-              </label>
-
-              <label>
-                <span>Data ingresso</span>
-                <input type="date" name="data" required />
-              </label>
-
-              <label>
-                <span>Tipo intervento</span>
-                <select name="intervento" required>
-                  <option value="">Seleziona</option>
-                  <option value="Manutenzione ordinaria">Manutenzione ordinaria</option>
-                  <option value="Riparazione meccanica">Riparazione meccanica</option>
-                  <option value="Diagnosi elettronica">Diagnosi elettronica</option>
-                  <option value="Cambio pneumatici">Cambio pneumatici</option>
-                  <option value="Revisione periodica">Revisione periodica</option>
-                  <option value="Carrozzeria e verniciatura">Carrozzeria e verniciatura</option>
-                  <option value="Sospensioni">Sospensioni</option>
-                </select>
-              </label>
-
-              <label>
-                <span>Priorità</span>
-                <select name="priorita">
-                  <option value="Bassa">Bassa</option>
-                  <option value="Media" selected>Media</option>
-                  <option value="Alta">Alta</option>
-                </select>
-              </label>
-
-              <label>
-                <span>Stato</span>
-                <select name="stato">
-                  <option value="In lavorazione" selected>In lavorazione</option>
-                  <option value="In attesa pezzi">In attesa pezzi</option>
-                  <option value="Pronto">Pronto</option>
-                  <option value="Consegnato">Consegnato</option>
-                </select>
-              </label>
+      <main class="welcome-layout">
+        <section class="card welcome-card">
+          <h2>Ciao! 👋</h2>
+          <p class="welcome-text">Siamo lieti di averti qui! Questo è il nostro sistema di prenotazione appuntamenti.</p>
+          
+          <div class="welcome-features">
+            <div class="feature">
+              <span class="feature-icon">📅</span>
+              <h3>Prenota un appuntamento</h3>
+              <p>Scegli data e ora che preferisci</p>
             </div>
-
-            <label>
-              <span>Descrizione guasto / richiesta</span>
-              <textarea name="descrizione" rows="4" placeholder="Descrivi il problema rilevato o il lavoro richiesto..." required></textarea>
-            </label>
-
-            <div class="checkbox-group">
-              <p>Servizi richiesti</p>
-              <div class="checks">
-                <label><input type="checkbox" name="servizi" value="Controllo fluidi" /> Controllo fluidi</label>
-                <label><input type="checkbox" name="servizi" value="Diagnosi computerizzata" /> Diagnosi computerizzata</label>
-                <label><input type="checkbox" name="servizi" value="Allineamento ruote" /> Allineamento ruote</label>
-                <label><input type="checkbox" name="servizi" value="Tagliando completo" /> Tagliando completo</label>
-              </div>
+            <div class="feature">
+              <span class="feature-icon">🔧</span>
+              <h3>Scegli il servizio</h3>
+              <p>Dalla manutenzione alle riparazioni</p>
             </div>
-
-            <div class="grid two-columns">
-              <label>
-                <span>Costo stimato (€)</span>
-                <input type="number" name="costo" min="0" step="0.01" placeholder="250.00" />
-              </label>
-
-              <label>
-                <span>Telefono contatto</span>
-                <input type="tel" name="telefono" placeholder="+39 333 1234567" />
-              </label>
-            </div>
-
-            <label>
-              <span>Note</span>
-              <textarea name="note" rows="3" placeholder="Note aggiuntive, riferimenti, orari preferiti..."></textarea>
-            </label>
-
-            <div class="actions">
-              <button type="submit" class="primary">Salva tagliando</button>
-              <button type="reset" class="secondary">Reset</button>
-            </div>
-          </form>
-        </section>
-
-        <aside class="card summary-card">
-          <h2>Tagliandi registrati</h2>
-
-          <div class="stats">
-            <div>
-              <strong id="countTotal">0</strong>
-              <span>Totali</span>
-            </div>
-            <div>
-              <strong id="countInProgress">0</strong>
-              <span>In corso</span>
-            </div>
-            <div>
-              <strong id="countReady">0</strong>
-              <span>Pronti</span>
+            <div class="feature">
+              <span class="feature-icon">📞</span>
+              <h3>Resta in contatto</h3>
+              <p>Ti contatteremo per confermare</p>
             </div>
           </div>
 
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Veicolo</th>
-                  <th>Targa</th>
-                  <th>Intervento</th>
-                  <th>Stato</th>
-                </tr>
-              </thead>
-              <tbody id="tagliandiBody">
-                <tr>
-                  <td colspan="4" class="empty">Nessun tagliando inserito</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="welcome-actions">
+            <a href="./clients.html" class="button primary">📅 Prenota Appuntamento</a>
+          </div>
+        </section>
+
+        <aside class="card info-card">
+          <h2>Orari di apertura</h2>
+          <div class="hours">
+            <div class="hour-item">
+              <span class="day">Lunedì - Venerdì:</span>
+              <span class="time">08:00 - 18:00</span>
+            </div>
+            <div class="hour-item">
+              <span class="day">Sabato:</span>
+              <span class="time">08:00 - 14:00</span>
+            </div>
+            <div class="hour-item">
+              <span class="day">Domenica:</span>
+              <span class="time">Chiuso</span>
+            </div>
+          </div>
+
+          <h3 style="margin-top: 24px; margin-bottom: 12px;">Contatti</h3>
+          <div class="contact-info">
+            <p>📞 +39 123 456 7890</p>
+            <p>📧 info@officina.it</p>
+            <p>📍 Via Roma 10, Milano</p>
           </div>
         </aside>
       </main>
+
+      <dialog id="settingsDialog" class="settings-dialog" aria-labelledby="settingsTitle">
+        <div class="settings-header">
+          <h2 id="settingsTitle">Impostazioni</h2>
+          <button id="closeSettings" type="button" class="settings-close">Chiudi</button>
+        </div>
+        <div class="settings-content">
+          <div class="settings-group">
+            <h3>Tema</h3>
+            <div class="settings-options">
+              <label class="theme-option">
+                <input type="radio" name="theme" value="dark" />
+                <span>Tema scuro</span>
+              </label>
+              <label class="theme-option">
+                <input type="radio" name="theme" value="light" />
+                <span>Tema chiaro</span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-group">
+            <h3>Admin</h3>
+            <button id="adminLoginButton" type="button" class="admin-button">🔐 Accedi Admin</button>
+          </div>
+          <div class="settings-group" id="adminPasswordGroup" style="display: none;">
+            <label>
+              <span>Password Admin</span>
+              <input id="adminPassword" type="password" placeholder="Inserisci password" />
+            </label>
+            <div class="admin-buttons">
+              <button id="adminSubmitButton" type="button" class="primary">Accedi</button>
+              <button id="adminCancelButton" type="button" class="secondary">Annulla</button>
+            </div>
+          </div>
+          <div class="settings-group">
+            <h3>Informazioni</h3>
+            <p class="info-text">Gestore Tagliandi Auto v1.0.0</p>
+          </div>
+        </div>
+      </dialog>
     </div>
 
-    <script src="./script.js"></script>
+    <script src="./index.js"></script>
   </body>
 </html>

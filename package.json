@@ -8,12 +8,14 @@
   "main": "server.js",
   "scripts": {
     "test": "node --check server.js && node --check public/script.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "docker compose up -d mysql && until docker exec mysql-dev mysqladmin ping -uutente -ppassword --silent; do sleep 1; done && node server.js"
   },
   "dependencies": {
     "dotenv": "^18.0.4",
     "express": "^5.2.1",
-    "mysql2": "^3.24.4"
+    "mysql2": "^3.24.4",
+    "xlsx": "^0.18.5"
   },
   "keywords": []
 }

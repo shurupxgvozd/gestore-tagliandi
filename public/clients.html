@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prenota Appuntamento - Officina</title>
+    <script>
+      try {
+        if (localStorage.getItem('theme') === 'light') document.documentElement.dataset.theme = 'light';
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div>
+          <p class="eyebrow">Officina digitale // Precisione meccanica</p>
+          <h1>Prenota il tuo appuntamento</h1>
+        </div>
+        <div class="header-actions">
+          <a href="./index.html" class="nav-link">Back to Main</a>
+          <div class="badge">Nuovi appuntamenti</div>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="card form-card">
+          <h2>Dati appuntamento</h2>
+
+          <form id="appointmentForm">
+            <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
+            <div class="grid two-columns">
+              <label>
+                <span>Nome cliente</span>
+                <input type="text" name="cliente" placeholder="Mario Rossi" autocomplete="name" required />
+              </label>
+              <label>
+                <span>Telefono</span>
+                <input type="tel" name="telefono" placeholder="+39 333 1234567" autocomplete="tel" required />
+              </label>
+              <label>
+                <span>Email</span>
+                <input type="email" name="email" placeholder="mario@example.it" autocomplete="email" required />
+              </label>
+              <label>
+                <span>Indirizzo</span>
+                <input type="text" name="indirizzo" placeholder="Via Roma 10, Milano" autocomplete="street-address" required />
+              </label>
+              <label>
+                <span>Targa veicolo</span>
+                <input type="text" name="targa" placeholder="AB123CD" required />
+              </label>
+            </div>
+
+            <div class="grid two-columns">
+              <label>
+                <span>Modello veicolo</span>
+                <input type="text" name="veicolo" placeholder="BMW Serie 3" required />
+              </label>
+              <label>
+                <span>Data appuntamento</span>
+                <input type="date" name="data" required />
+              </label>
+              <label>
+                <span>Ora appuntamento</span>
+                <input type="time" name="ora" required />
+              </label>
+              <label>
+                <span>Tipo intervento</span>
+                <select name="intervento" required>
+                  <option value="">Seleziona</option>
+                  <option value="Manutenzione ordinaria">Manutenzione ordinaria</option>
+                  <option value="Riparazione meccanica">Riparazione meccanica</option>
+                  <option value="Diagnosi elettronica">Diagnosi elettronica</option>
+                  <option value="Cambio pneumatici">Cambio pneumatici</option>
+                  <option value="Revisione periodica">Revisione periodica</option>
+                  <option value="Carrozzeria e verniciatura">Carrozzeria e verniciatura</option>
+                  <option value="Sospensioni">Sospensioni</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              <span>Descrizione del problema</span>
+              <textarea name="descrizione" rows="4" placeholder="Descrivi il problema o la richiesta..." required></textarea>
+            </label>
+
+            <div class="actions">
+              <button type="submit" class="primary">Prenota appuntamento</button>
+              <button type="reset" class="secondary">Reset</button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="card summary-card">
+          <h2>Ultimi appuntamenti</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Data</th>
+                  <th>Ora</th>
+                  <th>Intervento</th>
+                </tr>
+              </thead>
+              <tbody id="appointmentsBody">
+                <tr>
+                  <td colspan="4" class="empty">Nessun appuntamento</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <script src="./clients.js"></script>
+  </body>
+</html>
